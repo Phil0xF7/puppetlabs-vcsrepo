@@ -40,18 +40,18 @@ describe "clones a remote repo" do
       apply_manifest(pp, :catch_failures => true)
       expect(apply_manifest(pp, :catch_failures => true).exit_code).to be_zero
     end
-  end
 
-  describe file('/tmp/vcsrepo_sha') do
-    it { should be_directory }
-  end
+    describe file('/tmp/vcsrepo_sha') do
+      it { should be_directory }
+    end
 
-  describe file('/tmp/vcsrepo_sha/.git') do
-    it { should be_directory }
-  end
+    describe file('/tmp/vcsrepo_sha/.git') do
+      it { should be_directory }
+    end
 
-  describe file('/tmp/vcsrepo_sha/.git/HEAD') do
-    it { should contain 'f252283cf1501960f627e121d852b05f67c7214c' }
+    describe file('/tmp/vcsrepo_sha/.git/HEAD') do
+      it { should contain 'f252283cf1501960f627e121d852b05f67c7214c' }
+    end
   end
 
   context 'clone a remote repo based on a tag' do
@@ -67,18 +67,18 @@ describe "clones a remote repo" do
       apply_manifest(pp, :catch_failures => true)
       expect(apply_manifest(pp, :catch_failures => true).exit_code).to be_zero
     end
-  end
 
-  describe file('/tmp/vcsrepo_tag') do
-    it { should be_directory }
-  end
+    describe file('/tmp/vcsrepo_tag') do
+      it { should be_directory }
+    end
 
-  describe file('/tmp/vcsrepo_tag/.git') do
-    it { should be_directory }
-  end
+    describe file('/tmp/vcsrepo_tag/.git') do
+      it { should be_directory }
+    end
 
-  describe file('/tmp/vcsrepo_tag/.git/HEAD') do
-    it { should contain 'efe313070c0aa56a67f3c393889334c2f4fe2998' }
+    describe file('/tmp/vcsrepo_tag/.git/HEAD') do
+      it { should contain 'efe313070c0aa56a67f3c393889334c2f4fe2998' }
+    end
   end
 
   context 'clone a remote repo based on a branch name' do
@@ -94,17 +94,17 @@ describe "clones a remote repo" do
       apply_manifest(pp, :catch_failures => true)
       expect(apply_manifest(pp, :catch_failures => true).exit_code).to be_zero
     end
-  end
 
-  describe file('/tmp/vcsrepo_branch') do
-    it { should be_directory }
-  end
+    describe file('/tmp/vcsrepo_branch') do
+      it { should be_directory }
+    end
 
-  describe file('/tmp/vcsrepo_branch/.git') do
-    it { should be_directory }
-  end
+    describe file('/tmp/vcsrepo_branch/.git') do
+      it { should be_directory }
+    end
 
-  describe file('/tmp/vcsrepo_branch/.git/HEAD') do
-    it { should contain 'ref: refs/heads/feature/hg' }
+    describe file('/tmp/vcsrepo_branch/.git/HEAD') do
+      it { should contain 'ref: refs/heads/feature/hg' }
+    end
   end
 end
