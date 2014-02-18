@@ -21,6 +21,10 @@ describe 'create a repo' do
       end
     end
 
+    describe file('/tmp/vcsrepo_blank_repo/.git') do
+      it { should be_directory }
+    end
+
   end
 
   context 'create a bare repo' do
@@ -37,6 +41,10 @@ describe 'create a repo' do
 
     describe file('/tmp/vcsrepo_bare_repo/config') do
       it { should contain 'bare = true' }
+    end
+
+    describe file('/tmp/vcsrepo_bare_repo/.git') do
+      it { should_not be_directory }
     end
   end
 end
