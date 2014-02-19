@@ -23,6 +23,11 @@ RSpec.configure do |c|
     # Install module and dependencies
     puppet_module_install(:source => proj_root, :module_name => 'vcsrepo')
     shell('yum install -y git')
+
+    # copy and untar test git repo
+    scp_to(master, "#{proj_root}/spec/acceptance/files/testrepo.tar.gz", '/tmp')
+    shell("tar xvf /tmp/testrepo.tar.gz -C /tmp")
+
     shell('/bin/touch /etc/puppet/hiera.yaml')
   end
 end
