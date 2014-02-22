@@ -1,7 +1,7 @@
 require 'spec_helper_acceptance'
 
 describe 'create a repo' do
-  context 'create a blank repo' do
+  context 'without a source' do
     it 'creates a blank repo' do
       pp = <<-EOS
       vcsrepo { '/tmp/testrepo_blank_repo':
@@ -9,8 +9,10 @@ describe 'create a repo' do
         provider => git,
       }
       EOS
+
+      # Run it twice and test for idempotency
       apply_manifest(pp, :catch_failures => true)
-      expect(apply_manifest(pp, :catch_failures => true).exit_code).to be_zero
+      apply_manifest(pp, :catch_changes => true)
     end
 
     describe file("/tmp/testrepo_blank_repo/") do
@@ -24,19 +26,20 @@ describe 'create a repo' do
     describe file('/tmp/testrepo_blank_repo/.git') do
       it { should be_directory }
     end
-
   end
 
-  context 'create a bare repo' do
-    it 'create a bare repo' do
+  context 'bare repo' do
+    it 'creates a bare repo' do
       pp = <<-EOS
       vcsrepo { '/tmp/testrepo_bare_repo':
         ensure => bare,
         provider => git,
       }
       EOS
+
+      # Run it twice and test for idempotency
       apply_manifest(pp, :catch_failures => true)
-      expect(apply_manifest(pp, :catch_failures => true).exit_code).to be_zero
+      apply_manifest(pp, :catch_changes => true)
     end
 
     describe file('/tmp/testrepo_bare_repo/config') do
@@ -44,6 +47,28 @@ describe 'create a repo' do
     end
 
     describe file('/tmp/testrepo_bare_repo/.git') do
+      it { should_not be_directory }
+    end
+  end
+
+  context 'bare repo with a revision' do
+    it 'creates a bare repo' do
+      pp = <<-EOS
+      vcsrepo { '/tmp/testrepo_bare_repo_rev':
+        ensure => bare,
+        provider => git,
+        revision => 'master',
+      }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+    end
+
+    describe file('/tmp/testrepo_bare_repo_rev/config') do
+      it { should contain 'bare = true' }
+    end
+
+    describe file('/tmp/testrepo_bare_repo_rev/.git') do
       it { should_not be_directory }
     end
   end
