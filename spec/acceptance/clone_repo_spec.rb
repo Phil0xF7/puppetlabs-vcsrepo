@@ -261,4 +261,36 @@ describe 'clones a remote repo' do
       it { should be_directory }
     end
   end
+
+  context 'as a user' do
+    it 'applys the manifest' do
+      pp = <<-EOS
+      user { 'testuser':
+        ensure => present,
+      }
+
+      vcsrepo { '/tmp/testrepo_user':
+        ensure => present,
+        provider => git,
+        source => 'file:///tmp/testrepo.git',
+        user => 'testuser',
+        require => User['testuser'],
+      }
+      EOS
+
+      # Run it twice and test for idempotency
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
+    end
+
+    it 'should have "testuser" user permissions on all files/folders' do
+      shell('stat -c %U $(find /tmp/testrepo_user) | uniq | wc -l | grep 1')
+      shell('stat -c %U $(find /tmp/testrepo_user) | uniq | grep "testuser"')
+    end
+
+    it 'should have "testuser" group permissions on all files/folders' do
+      shell('stat -c %G $(find /tmp/testrepo_user) | uniq | wc -l | grep 1')
+      shell('stat -c %G $(find /tmp/testrepo_user) | uniq | grep "testuser"')
+    end
+  end
 end
