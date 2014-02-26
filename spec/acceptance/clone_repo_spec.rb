@@ -293,4 +293,25 @@ describe 'clones a remote repo' do
       shell('stat -c %G $(find /tmp/testrepo_user) | uniq | grep "testuser"')
     end
   end
+
+  context 'non-origin remote name' do
+    it 'applys the manifest' do
+      pp = <<-EOS
+      vcsrepo { '/tmp/testrepo_remote':
+        ensure => present,
+        provider => git,
+        source => 'file:///tmp/testrepo.git',
+        remote => 'testorigin',
+      }
+      EOS
+
+      # Run it twice and test for idempotency
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
+    end
+
+    it 'remote name is "testorigin"' do
+      shell('git --git-dir=/tmp/testrepo_remote/.git remote | grep "testorigin"')
+    end
+  end
 end
