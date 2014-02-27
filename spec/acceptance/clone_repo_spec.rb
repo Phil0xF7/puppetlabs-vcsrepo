@@ -314,4 +314,41 @@ describe 'clones a remote repo' do
       shell('git --git-dir=/tmp/testrepo_remote/.git remote | grep "testorigin"')
     end
   end
+
+  context 'as a user with ssh' do
+    before(:all) do
+      # create user
+      pp = <<-EOS
+      user { 'testuser2':
+        ensure => present,
+        managehome => true,
+      }
+      EOS
+      apply_manifest(pp, :catch_failures => true)
+
+      # create ssh keys
+      shell('mkdir -p /home/testuser2/.ssh')
+      shell('ssh-keygen -q -t rsa -f /home/testuser2/.ssh/id_rsa -N ""')
+
+      # copy public key to authorized_keys
+      shell('cat /home/testuser2/.ssh/id_rsa.pub > /home/testuser2/.ssh/authorized_keys')
+      shell('echo -e "Host localhost\n\tStrictHostKeyChecking no\n" > /home/testuser2/.ssh/config')
+      shell('chown -R testuser2:testuser2 /home/testuser2/.ssh')
+    end
+
+    it 'applys the manifest' do
+      pp = <<-EOS
+      vcsrepo { '/tmp/testrepo_user_ssh':
+        ensure => present,
+        provider => git,
+        source => 'testuser2@localhost:/tmp/testrepo.git',
+        user => 'testuser2',
+      }
+      EOS
+
+      # Run it twice and test for idempotency
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
+    end
+  end
 end
