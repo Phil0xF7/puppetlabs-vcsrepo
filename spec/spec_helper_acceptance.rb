@@ -25,8 +25,9 @@ RSpec.configure do |c|
     shell('yum install -y git')
 
     # copy and untar test git repo
-    scp_to(master, "#{proj_root}/spec/acceptance/files/testrepo.tar.gz", '/tmp')
-    shell("tar xvf /tmp/testrepo.tar.gz -C /tmp")
+    #scp_to(master, "#{proj_root}/spec/acceptance/files/testrepo.tar.gz", '/tmp')
+    #shell("tar xvf /tmp/testrepo.tar.gz -C /tmp")
+    run_script("#{proj_root}/spec/acceptance/files/create_git_repo.sh")
 
     shell('/bin/touch /etc/puppet/hiera.yaml')
   end
