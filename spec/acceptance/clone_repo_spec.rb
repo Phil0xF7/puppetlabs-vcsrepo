@@ -26,13 +26,22 @@ describe 'clones a remote repo' do
   end
 
   context 'using a commit SHA' do
+    before(:all) do
+      @sha = shell('git --git-dir=/tmp/testrepo.git rev-list HEAD | tail -1').stdout.chomp
+    end
+
+    after(:all) do
+      shell('rm -rf /tmp/testrepo_sha')
+      shell('rm -rf /tmp/testrepo.git')
+    end
+
     it 'clones a repo' do
       pp = <<-EOS
       vcsrepo { '/tmp/testrepo_sha':
         ensure => present,
         provider => git,
         source => 'file:///tmp/testrepo.git',
-        revision => '32a7bfcdae539abb2cf77365edbaa250d592237b',
+        revision => "#{@sha}",
       }
       EOS
 
@@ -46,7 +55,7 @@ describe 'clones a remote repo' do
     end
 
     describe file('/tmp/testrepo_sha/.git/HEAD') do
-      it { should contain '32a7bfcdae539abb2cf77365edbaa250d592237b' }
+      it { should contain @sha }
     end
   end
 
